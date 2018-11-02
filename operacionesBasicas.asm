@@ -1,21 +1,23 @@
 Data segment
+    menu0  DB "1. Calculadora$"
+    menu1  DB "2. Apagar SO$"
     label1 DB "Selecciona una operacion $"
     label2 DB "1.- Suma $"
     label3 DB "2.- Resta $"
     label4 DB "3.- Multiplicacion $"
     label5 DB "4.- Division $"
-    label6 DB "5.- Salir $"
+    label6 DB "5.- Regresar $"
     label7 DB "Ingrese una opcion $"
     label8 DB "Ingrese numero     $"
     label9 DB "El resultado es $"
     label10 DB "error no divisible entre 0 $"
-    label11 DB "`cociente  $"
-    label12 DB "residuo $"
-    resultado DB 0
+    label11 DB "cociente  $"
+    label12 DB ", residuo $"
+    resultado DB    0
     cociente  DB    0
     residuo   DB    0
     numero    DB    0
-    signox     DB    0
+    signox    DB    0
     r2      DB    ?
     ac      DB    0
    
@@ -37,15 +39,56 @@ menu proc far
     push ax
     mov ax,data
     mov ds,ax
-    xor dx,dx
-    
+    xor dx,dx       
     ;interlineado
     mov ah,02h
     mov dl,10
     int 21h
     mov ah,02h
     mov dl,13
+    int 21h          
+    ;imprime seleccion de menu 
+    mov ah,09h
+    mov dx,offset menu0
+    int 21h  
+    ;interlineado
+    mov ah,02h
+    mov dl,10
     int 21h
+    mov ah,02h
+    mov dl,13
+    int 21h          
+    ;imprime seleccion de menu 
+    mov ah,09h
+    mov dx,offset menu1
+    int 21h 
+    ;interlineado
+    mov ah,02h
+    mov dl,10
+    int 21h
+    mov ah,02h
+    mov dl,13
+    int 21h          
+    ;imprime seleccion de menu 
+    mov ah,09h
+    mov dx,offset label7
+    int 21h  
+    ;lee teclado
+    mov ah,01h
+    int 21h
+     
+    ;ajunstando el teclado
+    xor ah,ah
+    sub al,30h
+    mov cx,2
+    ;verificando opcion
+    
+    cmp al,1
+    jz calculadora ;se dirige al metodo suma
+    cmp al,2
+    jz fin
+       
+calculadora:       
     ;interlineado
     mov ah,02h
     mov dl,10
@@ -148,7 +191,7 @@ menu proc far
     jz divi ;se dirige al metodo dividir
     
     cmp al,5
-    jz fin
+    jmp menu
     
 suma: 
     mov ah,02h
@@ -239,8 +282,9 @@ imprime:
         MOV DL,BL
         MOV AH,02H
         INT 21H;IMPRIME LA UNIDAD
-        mov cx,2
-        jmp menu
+        mov cx,2  
+        mov resultado, 0
+        jmp calculadora
 resta:
     mov ah,02h
     mov dl,10
@@ -437,7 +481,7 @@ termina:
        MOV AH,02H ;IMPRIME EL RESIDUO
        INT 21H
        
-       jmp menu  
+       jmp calculadora  
 fin:     ret     
 menu endp
 code ends
